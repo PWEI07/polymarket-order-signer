@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+py-clob-client-v2
+eth-account
+typing-extensions
+web3
+requests

@@ -1,0 +1,8 @@
+.env
+.env.*
+.git
+.gitignore
+__pycache__
+node_modules
+*.md
+.dockerignore
