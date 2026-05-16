@@ -1,0 +1,17 @@
+# Fly.io configuration for polymarket-order-signer
+# Run `fly launch --no-deploy` first, then `fly deploy`.
+# See README.md "Deploy to Cloud" section for full instructions.
+
+[build]
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1

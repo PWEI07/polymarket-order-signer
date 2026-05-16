@@ -372,16 +372,18 @@ Setup complete!
 Next steps:
   1. Fund your deposit wallet with pUSD:
      {dw}
-  2. Start the signer:
-     docker compose up -d signer
+  2. Deploy the signer (pick one):
+     a) Cloud (recommended): see README.md "Deploy to Cloud" section
+        - Run: fly launch --no-deploy && fly secrets set ... && fly deploy
+     b) Local Docker: docker compose up -d signer
   3. Share with your trading operator:
      - CLOB_API_KEY, CLOB_API_SECRET, CLOB_API_PASSPHRASE
      - DEPOSIT_WALLET
      - EOA/signer address: {eoa}
-     - Signer URL (http://your-server:8080)
+     - Signer URL (e.g. https://your-app.fly.dev or http://your-server:8080)
      - ORDER_SIGNER_AUTH_TOKEN
   4. Keep private:
-     - PRIVATE_KEY (stays in this server only)
+     - PRIVATE_KEY (stays in this server / your Fly.io account only)
 """)
 
 
