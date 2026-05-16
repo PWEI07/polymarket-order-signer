@@ -345,9 +345,10 @@ def step_generate_clob_creds(env: dict, deposit_wallet: str, env_path: Path):
 def step_verify(env_path: Path):
     print("\nStep 4/4: Verifying setup...")
 
-    env = dotenv_values(env_path)
+    env = normalize_env(dotenv_values(env_path))
     dw = env.get("DEPOSIT_WALLET", "").strip()
     clob_key = env.get("CLOB_API_KEY", "").strip()
+    eoa = env.get("RELAY_API_KEY_ADDRESS", "").strip()
 
     ok = True
     if dw and has_bytecode(dw):
@@ -376,6 +377,7 @@ Next steps:
   3. Share with your trading operator:
      - CLOB_API_KEY, CLOB_API_SECRET, CLOB_API_PASSPHRASE
      - DEPOSIT_WALLET
+     - EOA/signer address: {eoa}
      - Signer URL (http://your-server:8080)
      - ORDER_SIGNER_AUTH_TOKEN
   4. Keep private:

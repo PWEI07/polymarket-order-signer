@@ -74,6 +74,7 @@ curl -X POST http://localhost:8080/sign-order \
 | `CLOB_API_SECRET` | `RELAY_API_KEY` |
 | `CLOB_API_PASSPHRASE` | |
 | `DEPOSIT_WALLET` | |
+| `RELAY_API_KEY_ADDRESS` (your EOA/signer address) | |
 | Signer URL + `ORDER_SIGNER_AUTH_TOKEN` | |
 
 The trading operator uses the CLOB credentials for HMAC authentication and calls your signer to get order signatures. They cannot withdraw funds.
