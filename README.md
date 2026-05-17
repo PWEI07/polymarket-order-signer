@@ -19,7 +19,6 @@ This tool deploys a signing service to Fly.io so your trading operator can place
 | `RELAY_API_KEY_ADDRESS` | Same page — the EOA address that owns the key |
 | Docker | Must be installed and running on your computer |
 
-如果用邮箱/Google 注册 Polymarket，通常无法导出 private key。建议新建一个 MetaMask 钱包连接 Polymarket。不要使用主钱包，建议只放少量资金。
 
 ## Steps (3 commands) / 三步完成
 
