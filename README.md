@@ -18,9 +18,17 @@ cp .env.example .env
 # 2. One-time setup — deploys wallet, approves contracts, generates CLOB creds
 docker compose run --rm setup
 
-# 3. Start the signer
-docker compose up -d signer
+# 3. Deploy to cloud (one command — handles everything)
+./scripts/deploy-fly.sh
+#    Prints a ready-to-copy block with all values to send to your trading operator.
 ```
+
+That's it. Step 3 installs the Fly CLI if needed, signs you up, encrypts your secrets,
+deploys the signer, and prints exactly what to share. Your private key never leaves
+your Fly.io account.
+
+就这三步。第三步会自动安装 Fly CLI、注册、加密上传密钥、部署签名服务，最后打印一段
+可以直接复制发给交易执行方的文本。你的私钥始终只在你自己的 Fly.io 账户里。
 
 ## Prerequisites / 前置条件
 
@@ -53,41 +61,48 @@ Running the signer on your own computer means unstable IPs and downtime. Deploy 
 
 在自己电脑上跑 signer 会有 IP 变化和宕机问题。推荐部署到 Fly.io，获得稳定的 https 地址。你的私钥作为加密密钥存在你自己的 Fly.io 账户里，交易执行方看不到。
 
-### Fly.io (~$2/month, auto-sleeps when idle)
+### One command (after setup)
 
 ```bash
-# 1. Install Fly CLI (one-time)
-curl -L https://fly.io/install.sh | sh
-
-# 2. Sign up / log in
-fly auth signup       # first time
-# fly auth login      # returning user
-
-# 3. Launch app (from this directory, after `docker compose run --rm setup`)
-fly launch --no-deploy
-
-# 4. Upload secrets (encrypted — only you can see them)
-fly secrets set \
-  PRIVATE_KEY="0xYOUR_PRIVATE_KEY" \
-  RELAY_API_KEY="your-relay-api-key" \
-  RELAY_API_KEY_ADDRESS="0xYOUR_EOA_ADDRESS" \
-  DEPOSIT_WALLET="0xYOUR_DEPOSIT_WALLET" \
-  CLOB_API_KEY="from-your-.env" \
-  CLOB_API_SECRET="from-your-.env" \
-  CLOB_API_PASSPHRASE="from-your-.env" \
-  ORDER_SIGNER_AUTH_TOKEN="pick-a-long-random-string"
-
-# 5. Deploy
-fly deploy
-
-# 6. Verify
-fly status                         # shows your app URL
-curl https://YOUR-APP.fly.dev/health   # should return {"ok": true, ...}
+./scripts/deploy-fly.sh
 ```
 
-After deploy, your signer URL is `https://YOUR-APP.fly.dev`. Share this with your trading operator along with `ORDER_SIGNER_AUTH_TOKEN` and `RELAY_API_KEY_ADDRESS`.
+This script automatically:
+1. Installs the Fly CLI if not present
+2. Signs you up / logs you in
+3. Creates a Fly app
+4. Uploads all secrets from your `.env` (encrypted in Fly's vault)
+5. Auto-generates `ORDER_SIGNER_AUTH_TOKEN` if you haven't set one
+6. Deploys the signer
+7. **Prints a ready-to-copy block** with everything your trading operator needs
 
-部署后你的 signer 地址就是 `https://YOUR-APP.fly.dev`。把这个地址、`ORDER_SIGNER_AUTH_TOKEN` 和 `RELAY_API_KEY_ADDRESS` 分享给交易执行方即可。
+To redeploy after changes: `./scripts/deploy-fly.sh update`
+
+### Manual steps (if you prefer)
+
+<details>
+<summary>Click to expand manual Fly.io instructions</summary>
+
+```bash
+curl -L https://fly.io/install.sh | sh
+fly auth signup
+fly launch --no-deploy
+fly secrets set \
+  PRIVATE_KEY="..." RELAY_API_KEY="..." RELAY_API_KEY_ADDRESS="..." \
+  DEPOSIT_WALLET="..." CLOB_API_KEY="..." CLOB_API_SECRET="..." \
+  CLOB_API_PASSPHRASE="..." ORDER_SIGNER_AUTH_TOKEN="..."
+fly deploy
+fly status
+```
+</details>
+
+### Alternative: Local Docker
+
+If you prefer to run locally (stable server with static IP required):
+
+```bash
+docker compose up -d signer
+```
 
 ### Alternative: Railway (free tier, $1/month credit)
 
@@ -97,8 +112,6 @@ railway login
 railway init
 railway up
 ```
-
-Railway is free but limited to $1/month of compute. The signer is lightweight enough to fit. After deploy, Railway gives you a stable URL in the dashboard.
 
 ## API Endpoints
 

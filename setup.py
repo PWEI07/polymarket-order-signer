@@ -429,6 +429,15 @@ def main():
 
     env = normalize_env(dotenv_values(env_path))
     step_generate_clob_creds(env, deposit_wallet, env_path)
+
+    # Auto-generate ORDER_SIGNER_AUTH_TOKEN if still placeholder
+    auth_token = env.get("ORDER_SIGNER_AUTH_TOKEN", "").strip()
+    if not auth_token or auth_token == "change-me-to-a-random-secret":
+        import secrets
+        auth_token = secrets.token_hex(32)
+        upsert_env(env_path, "ORDER_SIGNER_AUTH_TOKEN", auth_token)
+        print(f"  -> Generated ORDER_SIGNER_AUTH_TOKEN (random 64-char hex)")
+
     step_verify(env_path)
 
 
